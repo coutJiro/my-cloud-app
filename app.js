@@ -106,15 +106,26 @@
       })
     })
     .then(res => {
-      console.log('📦 Response status:', res.status);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // Worker always returns 200 OK with a wrapper
       return res.json();
     })
-    .then(data => {
-      console.log('✅ Full API response:', data);
+    .then(wrapper => {
+      console.log('📦 Worker response wrapper:', wrapper);
+
+      // Check if the worker returned a success flag
+      if (!wrapper.success) {
+        // The worker returned an error (e.g., missing body, invalid JSON, etc.)
+        throw new Error(wrapper.error || wrapper.details || 'Worker reported failure');
+      }
+
+      // Now wrapper.data contains the actual API response from Shopee
+      const data = wrapper.data;
+
+      // Check Shopee retcode
       if (data.retcode !== 0) {
         throw new Error(`API Error ${data.retcode}: ${data.message || 'Unknown'}`);
       }
+
       const list = data.data.list || [];
       // Filter by queue_status
       const perimeter = list.filter(item => item.queue_status === 1 || item.queue_status === 2);
