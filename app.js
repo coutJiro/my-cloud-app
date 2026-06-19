@@ -1,156 +1,52 @@
-(function() {
-  console.log('✅ Remote app.js loaded');
+function fetchData() {
+  perimeterList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
+  ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
+  endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-  // -------------------- CONFIG --------------------
-  const PROXY_URL = 'https://shopee-proxy.malinaojerome151.workers.dev/';
-  const API_URL = 'https://spx.shopee.ph/api/in-station/dock_management/queue/list';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxfcqSqQtEf-8jcFXhW02Y9fIMg-fPmfReDBYCXKSVUI5ZXxuuUGubXtX7HtZIzOwQL/exec'; // your URL
 
-  const HEADERS = {
-    'accept': 'application/json, text/plain, */*',
-    'app': 'FMS Portal',
-    'content-type': 'application/json;charset=UTF-8',
-    'device-id': 'c0cc0ad5daf08fc1d7990996895385a3',
-    'pg-i': 'ee9LpDgfFdyz/FsCUie5NDujmKdlsabFFCXBTCPHc86+jWKkdAbXYUnMEOAjQnv7teTF/7VYbQHHnQqocU9eBHLmkg==',
-    'referer': 'https://spx.shopee.ph/',
-    'sec-ch-ua': '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
-    'version': 'fms-admin:20260610,@spx-instation/vue:20260617,@driver/driver-vue:20260610,@spx-workforceops/vue:20260616',
-    'x-csrftoken': '2d4695777ac14a6eb49712fff6f37e26',
-    'x-sap-ri': '71e5346afe1289b1078af13701017b75e3316fbb6cb738ed2828',
-    'x-sap-sec': 'IvLPUyjllAjyzAjyy5jazAXyy5jyzAXyzAjizAjy4AzyzVXzzAiYzzjyyAjyz9WssKHazAjyxAzyzFXzzAfWJb9/B1AAcH89jbK9VRpFPJ9+EcYlROV6qG9YvuNwUIOE/vS0Kbu/7aM3AvTSF7DHGbWo/epCiJWJnuHs0m/z8hHfze3CjH57C9HW8WLq4B1DGM8fEMdzjhQVGd9gJm3OZypxayxGMpSgCttQi5gI3viclpUBLtsUsoxm+C+I9j9xhJBU11mmRSis5to/Ky2b3JKyxxgHkl2+yZJg6rVJtosrIlJts9tYUiGNJLyxEesyKR0gHsvRW2u5vEes2zjGe8Bv8kNONtoH1ZUn2WApt5zZQhm1841GiSfiHGCv6QHWmetEGnXlOSmt8/Q9NhDV9CyHN67jqOQFUMm2u/Y90FhiwlSo9tFz4OTY2V8om4hJNdYobrLCv9Z3M1MmAjyzDN5Y8AkwIzIzAjyz1BhsKHazAjyfAjyzTXyzAf7Q9Mm+5qp8u5sPDzqQGoLItpCa5NyzAjkwluIGlaR15jyzAfYsKEhmAjyzTryzAj9zAjyPoMU+/BoWpY3MMnlob95+FAAHV2azAjyYIu4VQVPYIRyzAjymAjYzANyyAjazAjymAjyzTryzAj9zAjywCjYTvLEomZi1tGqjBy3MP371mwazAjywI+RVgbIw8uyzAjy'
+  const payload = {
+    url: API_URL,
+    headers: HEADERS,
+    body: REQUEST_BODY
   };
 
-  const REQUEST_BODY = {
-    pageno: 1,
-    count: 500
-  };
+  const formData = new URLSearchParams();
+  formData.append('payload', JSON.stringify(payload));
 
-  // -------------------- DOM refs --------------------
-  const refreshBtn = document.getElementById('refresh-btn');
-  const perimeterList = document.getElementById('perimeter-list');
-  const ongoingList = document.getElementById('ongoing-list');
-  const endedList = document.getElementById('ended-list');
-  const timestampEl = document.getElementById('timestamp');
-
-  function renderItems(list, status, container) {
-    if (!list || list.length === 0) {
-      container.innerHTML = `<p class="placeholder">No ${status} items</p>`;
-      return;
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(wrapper => {
+    console.log('📦 GAS response:', wrapper);
+    if (!wrapper.success) {
+      throw new Error(wrapper.error || 'GAS reported failure');
     }
-    let html = '';
-    list.forEach(item => {
-      if (status === 'perimeter') {
-        html += `
-          <div class="list-item">
-            <div class="plate">${item.queue_number || '—'}</div>
-            <div class="driver">${item.driver_name || 'No driver'} · ${item.vehicle_number || ''}</div>
-            <div>⏱ ${item.waiting_time || 0}s</div>
-          </div>
-        `;
-      } else if (status === 'ongoing') {
-        const dock = item.occupied_dock_name || '—';
-        const plate = item.vehicle_number || '—';
-        html += `
-          <div class="list-item">
-            <div class="plate">${plate}</div>
-            <div class="dock">🚪 ${dock}</div>
-            <div class="driver">${item.driver_name || 'No driver'}</div>
-          </div>
-        `;
-      } else if (status === 'ended') {
-        html += `
-          <div class="list-item">
-            <div class="plate">${item.queue_number || '—'}</div>
-            <div class="driver">${item.driver_name || 'No driver'} · ${item.vehicle_number || ''}</div>
-            <div>${item.allocated_dock_name ? 'Dock: ' + item.allocated_dock_name : ''}</div>
-          </div>
-        `;
-      }
-    });
-    container.innerHTML = html;
-  }
+    const data = wrapper.data;
+    if (data.retcode !== 0) {
+      throw new Error(`Shopee API Error ${data.retcode}: ${data.message || 'Unknown'}`);
+    }
+    const list = data.data.list || [];
+    const perimeter = list.filter(item => item.queue_status === 1 || item.queue_status === 2);
+    const ongoing = list.filter(item => item.queue_status === 3);
+    const ended = list.filter(item => item.queue_status === 4);
 
-  // -------------------- Main fetch with FULL logging --------------------
-  function fetchData() {
-    console.log('🚀 fetchData() started');
+    renderItems(perimeter, 'perimeter', perimeterList);
+    renderItems(ongoing, 'ongoing', ongoingList);
+    renderItems(ended, 'ended', endedList);
 
-    perimeterList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
-    ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
-    endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
-
-    const payload = {
-      url: API_URL,
-      headers: HEADERS,
-      body: REQUEST_BODY
-    };
-
-    console.log('📤 Sending to Worker:', PROXY_URL);
-    console.log('📦 Payload:', payload);
-
-    fetch(PROXY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(res => {
-      console.log('📥 Response received. Status:', res.status);
-      console.log('📥 Headers:', [...res.headers.entries()]);
-      // Read the response as text FIRST to see exactly what comes back
-      return res.text();
-    })
-    .then(text => {
-      console.log('📄 Raw response text (first 500 chars):', text.substring(0, 500));
-      
-      let wrapper;
-      try {
-        wrapper = JSON.parse(text);
-      } catch (e) {
-        throw new Error('Failed to parse Worker response as JSON: ' + e.message);
-      }
-      
-      console.log('🔍 Parsed wrapper:', wrapper);
-
-      if (!wrapper.success) {
-        throw new Error('Worker error: ' + (wrapper.error || wrapper.details || 'Unknown'));
-      }
-
-      const data = wrapper.data;
-      console.log('📊 Shopee API response data:', data);
-
-      if (data.retcode !== 0) {
-        throw new Error(`Shopee API Error ${data.retcode}: ${data.message || 'Unknown'}`);
-      }
-
-      const list = data.data.list || [];
-      console.log('📋 Total items in list:', list.length);
-
-      const perimeter = list.filter(item => item.queue_status === 1 || item.queue_status === 2);
-      const ongoing = list.filter(item => item.queue_status === 3);
-      const ended = list.filter(item => item.queue_status === 4);
-
-      console.log(`🟢 Perimeter: ${perimeter.length}, 🟠 Ongoing: ${ongoing.length}, 🔴 Ended: ${ended.length}`);
-
-      renderItems(perimeter, 'perimeter', perimeterList);
-      renderItems(ongoing, 'ongoing', ongoingList);
-      renderItems(ended, 'ended', endedList);
-
-      timestampEl.textContent = new Date().toLocaleString();
-      console.log('✅ Done rendering.');
-    })
-    .catch(err => {
-      console.error('❌❌❌ CATCH BLOCK ERROR:', err);
-      const msg = `❌ Error: ${err.message}`;
-      perimeterList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
-      ongoingList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
-      endedList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM ready, attaching refresh button.');
-    refreshBtn.addEventListener('click', fetchData);
-    fetchData();
+    timestampEl.textContent = new Date().toLocaleString();
+  })
+  .catch(err => {
+    console.error('❌ Error:', err);
+    const msg = `❌ Error: ${err.message}`;
+    perimeterList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
+    ongoingList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
+    endedList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
   });
-})();
+}
