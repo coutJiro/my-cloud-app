@@ -2,13 +2,17 @@
   console.log('✅ Remote app.js loaded');
 
   // -------------------- CONFIG --------------------
-  // Use your Cloudflare Worker URL (or a CORS proxy)
-  const PROXY_URL = 'https://shopee-proxy.malinaojerome151.workers.dev/'; // <-- CHANGE THIS
+  // ✅ Your Cloudflare Worker URL (provided by you)
+  const PROXY_URL = 'https://shopee-proxy.malinaojerome151.workers.dev/';
 
   // The Shopee API endpoint (we send to proxy)
   const API_URL = 'https://spx.shopee.ph/api/in-station/dock_management/queue/list';
 
-  // Static headers from your request (keep them up to date!)
+  // ------------------------------------------------------------------
+  // 🛑 IMPORTANT: These headers expire! 
+  // If you get errors, copy fresh ones from your browser's Network tab
+  // while visiting https://spx.shopee.ph/
+  // ------------------------------------------------------------------
   const HEADERS = {
     'accept': 'application/json, text/plain, */*',
     'app': 'FMS Portal',
@@ -88,7 +92,8 @@
     ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
     endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-    // Make the POST request via the proxy
+    console.log('🔍 Calling Worker at:', PROXY_URL);
+
     fetch(PROXY_URL, {
       method: 'POST',
       headers: {
@@ -101,12 +106,14 @@
       })
     })
     .then(res => {
+      console.log('📦 Response status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
     .then(data => {
+      console.log('✅ Full API response:', data);
       if (data.retcode !== 0) {
-        throw new Error(`API Error: ${data.message || 'Unknown'}`);
+        throw new Error(`API Error ${data.retcode}: ${data.message || 'Unknown'}`);
       }
       const list = data.data.list || [];
       // Filter by queue_status
@@ -121,11 +128,11 @@
       timestampEl.textContent = new Date().toLocaleString();
     })
     .catch(err => {
+      console.error('❌ Fetch error:', err);
       const msg = `❌ Error: ${err.message}`;
       perimeterList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
       ongoingList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
       endedList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
-      console.error(err);
     });
   }
 
