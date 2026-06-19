@@ -3,7 +3,7 @@ function fetchData() {
   ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
   endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxfcqSqQtEf-8jcFXhW02Y9fIMg-fPmfReDBYCXKSVUI5ZXxuuUGubXtX7HtZIzOwQL/exec'; // your URL
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyuyjPtABnGeB2r7h_Y_15yPwiz_FvByxuzmuZ90nMojF17T-4jMUo2XcEpymsRaO2Irg/exec'; // your URL
 
   const payload = {
     url: API_URL,
