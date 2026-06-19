@@ -2,17 +2,9 @@
   console.log('✅ Remote app.js loaded');
 
   // -------------------- CONFIG --------------------
-  // ✅ Your Cloudflare Worker URL (provided by you)
   const PROXY_URL = 'https://shopee-proxy.malinaojerome151.workers.dev/';
-
-  // The Shopee API endpoint (we send to proxy)
   const API_URL = 'https://spx.shopee.ph/api/in-station/dock_management/queue/list';
 
-  // ------------------------------------------------------------------
-  // 🛑 IMPORTANT: These headers expire! 
-  // If you get errors, copy fresh ones from your browser's Network tab
-  // while visiting https://spx.shopee.ph/
-  // ------------------------------------------------------------------
   const HEADERS = {
     'accept': 'application/json, text/plain, */*',
     'app': 'FMS Portal',
@@ -27,23 +19,21 @@
     'version': 'fms-admin:20260610,@spx-instation/vue:20260617,@driver/driver-vue:20260610,@spx-workforceops/vue:20260616',
     'x-csrftoken': '2d4695777ac14a6eb49712fff6f37e26',
     'x-sap-ri': '71e5346afe1289b1078af13701017b75e3316fbb6cb738ed2828',
-    'x-sap-sec': 'IvLPUyjllAjyzAjyy5jazAXyy5jyzAXyzAjizAjy4AzyzVXzzAiYzzjyyAjyz9WssKHazAjyxAzyzFXzzAfWJb9/B1AAcH89jbK9VRpFPJ9+EcYlROV6qG9YvuNwUIOE/vS0Kbu/7aM3AvTSF7DHGbWo/epCiJWJnuHs0m/z8hHfze3CjH57C9HW8WLq4B1DGM8fEMdzjhQVGd9gJm3OZypxayxGMpSgCttQi5gI3viclpUBLtsUsoxm+C+I9j9xhJBU11mmRSis5to/Ky2b3JKyxxgHkl2+yZJg6rVJtosrIlJts9tYUiGNJLyxEesyKR0gHsvRW2u5vEes2zjGe8Bv8kNONtoH1ZUn2WApt5zZQhm1841GiSfiHGCv6QHWmetEGnXlOSmt8/Q9NhDV9CyHN67jqPkUv3hk+jOQFUMm2u/Y90FhiwlSo9tFz4OTY2V8om4hJNdYobrLCv9Z3M1MmAjyzDN5Y8AkwIzIzAjyz1BhsKHazAjyfAjyzTXyzAf7Q9Mm+5qp8u5sPDzqQGoLItpCa5NyzAjkwluIGlaR15jyzAfYsKEhmAjyzTryzAj9zAjyPoMU+/BoWpY3MMnlob95+FAAHV2azAjyYIu4VQVPYIRyzAjymAjYzANyyAjazAjymAjyzTryzAj9zAjywCjYTvLEomZi1tGqjBy3MP371mwazAjywI+RVgbIw8uyzAjy'
+    'x-sap-sec': 'IvLPUyjllAjyzAjyy5jazAXyy5jyzAXyzAjizAjy4AzyzVXzzAiYzzjyyAjyz9WssKHazAjyxAzyzFXzzAfWJb9/B1AAcH89jbK9VRpFPJ9+EcYlROV6qG9YvuNwUIOE/vS0Kbu/7aM3AvTSF7DHGbWo/epCiJWJnuHs0m/z8hHfze3CjH57C9HW8WLq4B1DGM8fEMdzjhQVGd9gJm3OZypxayxGMpSgCttQi5gI3viclpUBLtsUsoxm+C+I9j9xhJBU11mmRSis5to/Ky2b3JKyxxgHkl2+yZJg6rVJtosrIlJts9tYUiGNJLyxEesyKR0gHsvRW2u5vEes2zjGe8Bv8kNONtoH1ZUn2WApt5zZQhm1841GiSfiHGCv6QHWmetEGnXlOSmt8/Q9NhDV9CyHN67jqOQFUMm2u/Y90FhiwlSo9tFz4OTY2V8om4hJNdYobrLCv9Z3M1MmAjyzDN5Y8AkwIzIzAjyz1BhsKHazAjyfAjyzTXyzAf7Q9Mm+5qp8u5sPDzqQGoLItpCa5NyzAjkwluIGlaR15jyzAfYsKEhmAjyzTryzAj9zAjyPoMU+/BoWpY3MMnlob95+FAAHV2azAjyYIu4VQVPYIRyzAjymAjYzANyyAjazAjymAjyzTryzAj9zAjywCjYTvLEomZi1tGqjBy3MP371mwazAjywI+RVgbIw8uyzAjy'
   };
 
-  // Request body (you can adjust pageno, count)
   const REQUEST_BODY = {
     pageno: 1,
     count: 500
   };
 
-  // -------------------- DOM references --------------------
+  // -------------------- DOM refs --------------------
   const refreshBtn = document.getElementById('refresh-btn');
   const perimeterList = document.getElementById('perimeter-list');
   const ongoingList = document.getElementById('ongoing-list');
   const endedList = document.getElementById('ended-list');
   const timestampEl = document.getElementById('timestamp');
 
-  // -------------------- Helper: render items --------------------
   function renderItems(list, status, container) {
     if (!list || list.length === 0) {
       container.innerHTML = `<p class="placeholder">No ${status} items</p>`;
@@ -52,7 +42,6 @@
     let html = '';
     list.forEach(item => {
       if (status === 'perimeter') {
-        // status 1 or 2
         html += `
           <div class="list-item">
             <div class="plate">${item.queue_number || '—'}</div>
@@ -61,7 +50,6 @@
           </div>
         `;
       } else if (status === 'ongoing') {
-        // status 3
         const dock = item.occupied_dock_name || '—';
         const plate = item.vehicle_number || '—';
         html += `
@@ -72,7 +60,6 @@
           </div>
         `;
       } else if (status === 'ended') {
-        // status 4
         html += `
           <div class="list-item">
             <div class="plate">${item.queue_number || '—'}</div>
@@ -85,61 +72,75 @@
     container.innerHTML = html;
   }
 
-  // -------------------- Main fetch function --------------------
+  // -------------------- Main fetch with FULL logging --------------------
   function fetchData() {
-    // Show loading
+    console.log('🚀 fetchData() started');
+
     perimeterList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
     ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
     endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-    console.log('🔍 Calling Worker at:', PROXY_URL);
+    const payload = {
+      url: API_URL,
+      headers: HEADERS,
+      body: REQUEST_BODY
+    };
+
+    console.log('📤 Sending to Worker:', PROXY_URL);
+    console.log('📦 Payload:', payload);
 
     fetch(PROXY_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url: API_URL,
-        headers: HEADERS,
-        body: REQUEST_BODY
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     })
     .then(res => {
-      // Worker always returns 200 OK with a wrapper
-      return res.json();
+      console.log('📥 Response received. Status:', res.status);
+      console.log('📥 Headers:', [...res.headers.entries()]);
+      // Read the response as text FIRST to see exactly what comes back
+      return res.text();
     })
-    .then(wrapper => {
-      console.log('📦 Worker response wrapper:', wrapper);
+    .then(text => {
+      console.log('📄 Raw response text (first 500 chars):', text.substring(0, 500));
+      
+      let wrapper;
+      try {
+        wrapper = JSON.parse(text);
+      } catch (e) {
+        throw new Error('Failed to parse Worker response as JSON: ' + e.message);
+      }
+      
+      console.log('🔍 Parsed wrapper:', wrapper);
 
-      // Check if the worker returned a success flag
       if (!wrapper.success) {
-        // The worker returned an error (e.g., missing body, invalid JSON, etc.)
-        throw new Error(wrapper.error || wrapper.details || 'Worker reported failure');
+        throw new Error('Worker error: ' + (wrapper.error || wrapper.details || 'Unknown'));
       }
 
-      // Now wrapper.data contains the actual API response from Shopee
       const data = wrapper.data;
+      console.log('📊 Shopee API response data:', data);
 
-      // Check Shopee retcode
       if (data.retcode !== 0) {
-        throw new Error(`API Error ${data.retcode}: ${data.message || 'Unknown'}`);
+        throw new Error(`Shopee API Error ${data.retcode}: ${data.message || 'Unknown'}`);
       }
 
       const list = data.data.list || [];
-      // Filter by queue_status
+      console.log('📋 Total items in list:', list.length);
+
       const perimeter = list.filter(item => item.queue_status === 1 || item.queue_status === 2);
       const ongoing = list.filter(item => item.queue_status === 3);
       const ended = list.filter(item => item.queue_status === 4);
+
+      console.log(`🟢 Perimeter: ${perimeter.length}, 🟠 Ongoing: ${ongoing.length}, 🔴 Ended: ${ended.length}`);
 
       renderItems(perimeter, 'perimeter', perimeterList);
       renderItems(ongoing, 'ongoing', ongoingList);
       renderItems(ended, 'ended', endedList);
 
       timestampEl.textContent = new Date().toLocaleString();
+      console.log('✅ Done rendering.');
     })
     .catch(err => {
-      console.error('❌ Fetch error:', err);
+      console.error('❌❌❌ CATCH BLOCK ERROR:', err);
       const msg = `❌ Error: ${err.message}`;
       perimeterList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
       ongoingList.innerHTML = `<p class="placeholder" style="color:red;">${msg}</p>`;
@@ -147,10 +148,9 @@
     });
   }
 
-  // -------------------- Attach event & auto‑load --------------------
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM ready, attaching refresh button.');
     refreshBtn.addEventListener('click', fetchData);
-    fetchData(); // initial load
+    fetchData();
   });
-
 })();
