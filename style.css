@@ -1,61 +1,89 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(145deg, #f5f7fa 0%, #e9edf5 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #f0f2f5;
   padding: 20px;
 }
 #app-root {
-  max-width: 700px;
-  width: 100%;
-  background: white;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  max-width: 1200px;
+  margin: 0 auto;
 }
-header h1 {
-  color: #1a2b4c;
-}
-.controls {
+header {
   display: flex;
-  gap: 12px;
-  margin: 24px 0 20px;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
 }
-button {
-  background: #2a4b7c;
-  color: white;
+header h1 { color: #1a2b4c; }
+#refresh-btn {
   border: none;
-  padding: 12px 28px;
-  border-radius: 40px;
-  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
+  background: #2a4b7c;
+  color: white;
 }
-button#clear-btn {
-  background: #8c9bb5;
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
-#data-display {
-  background: #f8faff;
-  border-radius: 16px;
-  padding: 20px;
-  min-height: 100px;
-  border: 1px solid #e6edf8;
-}
-.data-item {
+.column {
   background: white;
-  padding: 16px;
   border-radius: 12px;
-  border-left: 5px solid #2a4b7c;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.column h2 {
+  font-size: 1.2rem;
+  border-bottom: 2px solid #eef3fc;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.perimeter h2 { color: #2e7d32; }
+.ongoing h2 { color: #e65100; }
+.ended h2 { color: #c62828; }
+
+.list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+.list-item {
+  background: #f8faff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 4px solid #2a4b7c;
+  font-size: 0.9rem;
+}
+.list-item .plate {
+  font-weight: 600;
+  color: #1a2b4c;
+}
+.list-item .driver {
+  color: #5a6b8c;
+}
+.list-item .dock {
+  background: #e3edfb;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+.placeholder {
+  color: #aab4cc;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
 }
 footer {
-  margin-top: 28px;
+  margin-top: 24px;
   text-align: right;
-  color: #aab4cc;
+  color: #8c9bb5;
+  font-size: 0.85rem;
 }
