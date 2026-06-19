@@ -3,7 +3,7 @@ function fetchData() {
   ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
   endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyuyjPtABnGeB2r7h_Y_15yPwiz_FvByxuzmuZ90nMojF17T-4jMUo2XcEpymsRaO2Irg/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycby1_7tQJTEJ3OcqPItU5N3O6ZRZPYFnNkWgRKxB104kRlJQF5ACaDBo10s8DfyQ5ZhaOg/exec';
 
   // Just send an empty request – GAS has everything built in
   fetch(GAS_URL, {
