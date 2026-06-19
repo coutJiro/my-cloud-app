@@ -3,7 +3,7 @@
 
   // -------------------- CONFIG --------------------
   // Use your Cloudflare Worker URL (or a CORS proxy)
-  const PROXY_URL = https://shopee-proxy.malinaojerome151.workers.dev/'; // <-- CHANGE THIS
+  const PROXY_URL = 'https://shopee-proxy.malinaojerome151.workers.dev/'; // <-- CHANGE THIS
 
   // The Shopee API endpoint (we send to proxy)
   const API_URL = 'https://spx.shopee.ph/api/in-station/dock_management/queue/list';
