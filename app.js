@@ -3,23 +3,15 @@ function fetchData() {
   ongoingList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
   endedList.innerHTML = '<p class="placeholder">⏳ Loading…</p>';
 
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyuyjPtABnGeB2r7h_Y_15yPwiz_FvByxuzmuZ90nMojF17T-4jMUo2XcEpymsRaO2Irg/exec'; // your URL
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyuyjPtABnGeB2r7h_Y_15yPwiz_FvByxuzmuZ90nMojF17T-4jMUo2XcEpymsRaO2Irg/exec';
 
-  const payload = {
-    url: API_URL,
-    headers: HEADERS,
-    body: REQUEST_BODY
-  };
-
-  const formData = new URLSearchParams();
-  formData.append('payload', JSON.stringify(payload));
-
+  // Just send an empty request – GAS has everything built in
   fetch(GAS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: formData
+    body: new URLSearchParams({ dummy: '1' }) // dummy body to avoid empty request
   })
   .then(res => res.json())
   .then(wrapper => {
