@@ -1,18 +1,32 @@
 <div id="app-root">
   <header>
-    <h1>🚀 Cloud-Powered Dashboard</h1>
-    <p>This entire UI is fetched from GitHub</p>
+    <h1>🚛 Station Queue Monitor</h1>
+    <p>Live data from Shopee In‑Station</p>
+    <button id="refresh-btn" style="background:#4CAF50;">⟳ Refresh</button>
   </header>
-  <main>
-    <section class="controls">
-      <button id="load-data-btn">📊 Fetch Live API Data</button>
-      <button id="clear-btn">🗑️ Clear</button>
-    </section>
-    <section id="data-display">
-      <p class="placeholder">Click the button to load data from an API.</p>
-    </section>
-  </main>
+
+  <div class="dashboard">
+    <div class="column perimeter">
+      <h2>🟢 Perimeter</h2>
+      <div class="list" id="perimeter-list">
+        <p class="placeholder">Waiting for data…</p>
+      </div>
+    </div>
+    <div class="column ongoing">
+      <h2>🟠 On Going</h2>
+      <div class="list" id="ongoing-list">
+        <p class="placeholder">Waiting for data…</p>
+      </div>
+    </div>
+    <div class="column ended">
+      <h2>🔴 Ended</h2>
+      <div class="list" id="ended-list">
+        <p class="placeholder">Waiting for data…</p>
+      </div>
+    </div>
+  </div>
+
   <footer>
-    <small>Version: <span id="version-tag">live</span></small>
+    <small>Last updated: <span id="timestamp">—</span></small>
   </footer>
 </div>
